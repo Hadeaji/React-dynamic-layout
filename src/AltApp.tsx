@@ -6,6 +6,7 @@ import { Responsive, WidthProvider } from "react-grid-layout";
 import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
 import "./styles.css";
+import { simpleInitialLayouts } from "./assets/utils";
 
 interface Props {
   domElements: any[];
@@ -20,25 +21,14 @@ interface Props {
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 
 const DropDrag: FunctionComponent<Props> = (props) => {
-  const [layouts, setLayouts] = useState<{ [index: string]: any[] }>({
-    lg: _.map(_.range(0, 25), function (item, i) {
-      const y = Math.ceil(Math.random() * 4) + 1;
-      return {
-        x: (_.random(0, 5) * 2) % 12,
-        y: Math.floor(i / 6) * y,
-        w: 2,
-        h: y,
-        i: i.toString(),
-        static: Math.random() < 0.05,
-      };
-    }),
-  });
+  const [layouts, setLayouts] = useState<{ [index: string]: any[] }>(simpleInitialLayouts);
   const [currentBreakpoint, setCurrentBreakpoint] = useState<string>("lg");
   const [compactType, setCompactType] = useState<string | null>("vertical");
   const [mounted, setMounted] = useState(false);
   const [toolbox, setToolbox] = useState<{ [index: string]: any[] }>({
     lg: [],
   });
+
 
   useEffect(() => {
     setMounted(true);
@@ -53,15 +43,15 @@ const DropDrag: FunctionComponent<Props> = (props) => {
   };
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const onCompactTypeChange = () => {
-    const newCompactType =
-      compactType === "horizontal"
-        ? "vertical"
-        : compactType === "vertical"
-        ? null
-        : "horizontal";
-    setCompactType(newCompactType);
-  };
+  // const onCompactTypeChange = () => {
+  //   const newCompactType =
+  //     compactType === "horizontal"
+  //       ? "vertical"
+  //       : compactType === "vertical"
+  //       ? null
+  //       : "horizontal";
+  //   setCompactType(newCompactType);
+  // };
 
   const onLayoutChange = (layout: any, layouts: any) => {
     setLayouts({ ...layouts });
@@ -77,39 +67,19 @@ const DropDrag: FunctionComponent<Props> = (props) => {
     );
   };
 
-  const generateDOM = () => {
-    return _.map(layouts.lg, function (l, i) {
-      return (
-        <div
-          key={i}
-          style={{ background: "#ccc" }}
-          className={l.static ? "static" : ""}
-        >
-          {l.static ? (
-            <span
-              className="text"
-              title="This item is static and cannot be removed or resized."
-            >
-              Static - {i}
-            </span>
-          ) : (
-            <span className="text">{i}</span>
-          )}
-        </div>
-      );
-    });
-  };
+  console.log(layouts);
+  
 
   return (
     <div className="content">
-      <div
+      {/* <div
         className="droppable-element"
         draggable
         unselectable="on"
         onDragStart={(e) => e.dataTransfer.setData("text/plain", "")}
       >
         Droppable Element (Drag me!)
-      </div>
+      </div> */}
 
       <div className="mb-4">
         <ResponsiveReactGridLayout
@@ -124,11 +94,25 @@ const DropDrag: FunctionComponent<Props> = (props) => {
           onBreakpointChange={onBreakpointChange}
           onDrop={onDrop}
           isDroppable
+          
         >
-          {generateDOM()}
-          {/* <div>
-
-          </div> */}
+          {/* {generateDOM()} */}
+          <div
+          key={'sad'}
+          style={{ background: "#ccc" }}
+          // className={l.static ? "static" : ""}
+        >
+          {/* {l.static ? (
+            <span
+              className="text"
+              title="This item is static and cannot be removed or resized."
+            >
+              Static - {i}
+            </span>
+          ) : ( */}
+            <span className="text">{1}</span>
+          {/* )} */}
+        </div>
         </ResponsiveReactGridLayout>
       </div>
     </div>
