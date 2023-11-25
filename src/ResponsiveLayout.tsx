@@ -49,35 +49,39 @@ function getFromLS(key: string) {
 const activeLayout = getFromLS("layout") || simpleInitialLayouts;
 
 const sizes = ["xxs", "xs", "sm", "md", "lg"];
+const measures = [ "480", "720", "920", "1120", "1280"];
+type _string_ = string | undefined
 
 const ResponsiveLayout: FunctionComponent<Props> = (props) => {
   const [layouts, setLayouts] = useState<{ [index: string]: any[] }>(
     activeLayout
   );
-  const [currentBreakpoint, setCurrentBreakpoint] = useState<string>('lg');
-  const [compactType, setCompactType] = useState<string | null>("vertical");
+  const [currentBreakpoint, setCurrentBreakpoint] = useState<_string_>(undefined);
+  const [minLayoutSize, setMinLayoutSize] = useState<_string_>(undefined);
+  
+  // const [compactType, setCompactType] = useState<"vertical" | "horizontal" | null | undefined>("vertical");
   const [mounted, setMounted] = useState(false);
   // const [toolbox, setToolbox] = useState<{ [index: string]: any[] }>({
   //   lg: [],
   // });
   const [editMode, setEditMode] = useState<boolean>(false);
-
   useEffect(() => {
     setMounted(true);
-  }, []);
+  }, [editMode]);
 
-  const onBreakpointChange = (breakpoint: any) => {
-    console.log(breakpoint);
+  // const onBreakpointChange = (breakpoint: any) => {
+  //   console.log(breakpoint);
 
-    setCurrentBreakpoint(breakpoint);
-    // setToolbox({
-    //   ...toolbox,
-    //   [breakpoint]: toolbox[breakpoint] || toolbox[currentBreakpoint] || [],
-    // });
-  };
+  //   setCurrentBreakpoint(breakpoint);
+  //   // setToolbox({
+  //   //   ...toolbox,
+  //   //   [breakpoint]: toolbox[breakpoint] || toolbox[currentBreakpoint] || [],
+  //   // });
+  // };
 
   // const onWidthChange = (width: number) => {
-  //   // console.log(width);
+  //   console.log(width);
+  // };
 
   //   if (width < 400) {
   //     setCurrentBreakpoint(sizes[0]); // "xxs" for width less than 400
@@ -90,7 +94,7 @@ const ResponsiveLayout: FunctionComponent<Props> = (props) => {
   //   } else {
   //     setCurrentBreakpoint(sizes[4]); // "lg" for width 1000 or greater
   //   }
-  
+
   //   // setCurrentBreakpoint(breakpoint);
   //   // setToolbox({
   //   //   ...toolbox,
@@ -113,53 +117,86 @@ const ResponsiveLayout: FunctionComponent<Props> = (props) => {
     setLayouts({ ...layouts });
   };
 
-  const onDrop = (layout: any, layoutItem: any) => {
-    alert(
-      `Element parameters:\n${JSON.stringify(
-        layoutItem,
-        ["x", "y", "w", "h"],
-        2
-      )}`
-    );
-  };
+  // const onDrop = (layout: any, layoutItem: any) => {
+  //   alert(
+  //     `Element parameters:\n${JSON.stringify(
+  //       layoutItem,
+  //       ["x", "y", "w", "h"],
+  //       2
+  //     )}`
+  //   );
+  // };
 
   const handleToggle = () => {
-    setEditMode(prevState => !prevState);
+    console.log(editMode);
+    // setCompactType("horizontal")
+    setEditMode((prevState) => !prevState);
   };
 
-  const setLayout = () => {
-    onBreakpointChange('xs')
+  // const setLayout = () => {
+  //   onBreakpointChange('xs')
+  // };
+
+  const handleSizeChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    if (event.target.value == "Auto") {
+      setMinLayoutSize('');
+      setCurrentBreakpoint(undefined);
+    } else {
+      setMinLayoutSize(`${measures[Number(event.target.value)]}px`);
+      setCurrentBreakpoint(sizes[Number(event.target.value)]);
+    }
   };
 
   return (
     <>
-      <button onClick={setLayout}>change layout</button>
       <button onClick={handleToggle}>
-        {editMode ? 'in Edit Mode' : 'off'}
+        {editMode ? "in Edit Mode" : "off"}
       </button>
-      <ResponsiveReactGridLayout
-        {...props}
-        style={{ background: "#f0f0f0" }}
-        layouts={layouts}
-        measureBeforeMount={false}
-        useCSSTransforms={mounted}
-        compactType={"vertical"}
-        preventCollision={!compactType}
-        onLayoutChange={onLayoutChange}
-        onBreakpointChange={onBreakpointChange}
-        onDrop={onDrop}
-        isDroppable
-        resizeHandles={[
-          "s",
-          "w",
-          "e",
-          "n"
-      ]}
-        // onWidthChange={onWidthChange}
-        // breakpoint={currentBreakpoint}
+
+      <select onChange={handleSizeChange}>
+        <option value={"Auto"}>Auto</option>
+        {sizes.map((size, index) => (
+          <option key={index} value={index}>
+            {size.toUpperCase()}
+          </option>
+        ))}
+      </select>
+
+      <div
+        style={{
+          overflow: "auto",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          width: "100%",
+          flexDirection: "column",
+        }}
       >
-        {props.children}
-      </ResponsiveReactGridLayout>
+        <ResponsiveReactGridLayout
+          {...props}
+          style={{ border: "3px solid grey", borderRadius: "7px", width: minLayoutSize ? minLayoutSize : 'calc(100% - 6px)' }}
+          layouts={layouts}
+          measureBeforeMount={false}
+          useCSSTransforms={mounted}
+          compactType={"vertical"}
+          preventCollision={true}
+          onLayoutChange={onLayoutChange}
+          // TO DO; the key is temp solution to refresh the layout children handels and drag effects,
+          // check if that is rerendering the whole sub tree, if so research other solutions
+          key={String(editMode)}
+          isResizable={editMode}
+          isDraggable={editMode}
+          ////////////
+          resizeHandles={["s", "w", "e", "n"]}
+          // onWidthChange={onWidthChange}
+          breakpoint={currentBreakpoint}
+          // onBreakpointChange={onBreakpointChange}
+          // onDrop={onDrop}
+          // isDroppable
+        >
+          {props.children}
+        </ResponsiveReactGridLayout>
+      </div>
     </>
   );
 };
