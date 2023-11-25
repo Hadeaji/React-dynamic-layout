@@ -9,7 +9,11 @@ export const simpleInitialLayouts = {
             "y": 0,
             "i": "sad",
             "moved": false,
-            "static": false
+            "static": false,
+            "minW":3,
+            "maxW":11,
+            "minH":2,
+            "maxH":9,
         }
     ],
     "md": [
@@ -20,7 +24,7 @@ export const simpleInitialLayouts = {
             "y": 0,
             "i": "sad",
             "moved": false,
-            "static": false
+            "static": false,
         }
     ],
     "sm": [
@@ -31,7 +35,7 @@ export const simpleInitialLayouts = {
             "y": 0,
             "i": "sad",
             "moved": false,
-            "static": false
+            "static": false,
         }
     ],
     "xs": [
@@ -42,7 +46,7 @@ export const simpleInitialLayouts = {
             "y": 0,
             "i": "sad",
             "moved": false,
-            "static": false
+            "static": false,
         }
     ],
     "xxs": [
@@ -53,7 +57,7 @@ export const simpleInitialLayouts = {
             "y": 0,
             "i": "sad",
             "moved": false,
-            "static": false
+            "static": false,
         }
     ]
 }
